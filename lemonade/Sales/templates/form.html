@@ -14,7 +14,11 @@
     <input type="submit" name='remove' value="Remove item">
 </form>
 {% if order %}
-<table>
+<table style="width:350px; border: 1px solid black">
+    <tr>
+        <td>Lemonade</td>
+        <td>Quantity</td>
+    </tr>
 {% for set in order %}
     <tr>
         <td>{{set.lemonade}}</td>
@@ -23,7 +27,8 @@
 {% endfor %}
 </table>
 {% endif %}
-${{ total }}
+Total: ${{ total }}
+<br>
 <form method="post">
     {% csrf_token %}
     {{form}}

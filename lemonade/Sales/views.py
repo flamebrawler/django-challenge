@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import *
 from .forms import *
@@ -17,29 +18,41 @@ def form(request):
         order.save()
         request.session['id'] = order.id
 
-    if request.method == 'POST':
-
+    if request.method == 'POST' and ('add' in request.POST or 'remove' in request.POST):
         lemonade_form = LemonadeEntryForm(request.POST)
 
         if 'add' in request.POST:
-            id = lemonade_form.cleaned_data['Lemonade']
-            HttpResponseRedirect('add-%s/'.format(id))
+            if lemonade_form.is_valid():
+                id = lemonade_form.cleaned_data['Lemonade']
+                print('add-{}/'.format(id))
+                return HttpResponseRedirect('add-{}/'.format(id))
         elif 'remove' in request.POST:
-            id = lemonade_form.cleaned_data['Lemonade']
-            HttpResponseRedirect('remove-%s/'.format(id))
-        elif 'submit' in request.POST:
-            form = EntryForm(request.POST)
+            if lemonade_form.is_valid():
+                id = lemonade_form.cleaned_data['Lemonade']
+                return HttpResponseRedirect('remove-{}/'.format(id))
+    else:
+        lemonade_form = LemonadeEntryForm()
+
+    if request.method == 'POST' and 'submit' in request.POST:
+        form = EntryForm(request.POST)
+
+        if form.is_valid():
 
             name = Staff.objects.get(id=form.cleaned_data['name'])
-            lemonade = Lemonade.objects.get(id=form.cleaned_data['Lemonade'])
+
             date = form.cleaned_data['date']
 
-            sale = Sale(sales_person=name, lemonade=lemonade, date=date)
+            id = request.session['id']
+            sale = Sale(sales_person=name, order=Order.objects.get(id=id), date=date)
             sale.save()
-            HttpResponseRedirect('')
+
+            order = Order()
+            order.save()
+            request.session['id'] = order.id
+
+            return HttpResponseRedirect('')
     else:
         form = EntryForm()
-        lemonade_form = LemonadeEntryForm()
 
     order = Order.objects.get(id=request.session['id'])
     template = {
@@ -54,29 +67,33 @@ def form(request):
 
 def remove_item(request, item):
     id = request.session['id']
-    removed = Order.objects.get(id=id).set.get(id=item)
-    if removed:
-        removed.quantity = removed.quanity - 1
-        removed.save(update_fields=['quantity'])
-    elif removed.quanity == 1:
-        removed.delete()
-    else:
+    order = Order.objects.get(id=id)
+    try:
+        removed = order.set.get(lemonade=item)
+        if removed.quantity > 1:
+            removed.quantity = removed.quantity - 1
+            removed.save(update_fields=['quantity'])
+        elif removed.quantity == 1:
+            removed.delete()
+    except ObjectDoesNotExist:
         request.session['error_message'] = 'Lemonade to be removed was not part of the list'
 
-    HttpResponseRedirect(reverse('form'))
+    return HttpResponseRedirect(reverse('form'))
 
 
 def add_item(request, item):
     id = request.session['id']
-    added = Order.objects.get(id=id).set.get(id=item)
-    if added:
-        added.quantity = added.quanity + 1
+    order = Order.objects.get(id=id)
+    try:
+        added = order.set.get(lemonade=Lemonade.objects.get(id=item))
+        added.quantity = added.quantity + 1
         added.save(update_fields=['quantity'])
-    else:
-        set = LemonadeSet(lemonade=item, quanity=1)
-        Order.objects.get(id=id).set.add(set)
+    except ObjectDoesNotExist:
+        set = LemonadeSet(lemonade=Lemonade.objects.get(id=item), quantity=1)
+        set.save()
+        order.set.add(set)
 
-    HttpResponseRedirect(reverse('form'))
+    return HttpResponseRedirect(reverse('form'))
 
 
 def report(request):
