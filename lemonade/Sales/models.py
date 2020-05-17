@@ -20,8 +20,26 @@ class Lemonade(models.Model):
         return str(self.name) + " @ $"+str(self.price)+"/cup"
 
 
-class Sale(models.Model):
+class LemonadeSet(models.Model):
     lemonade = models.ForeignKey(Lemonade, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+
+    def __str__(self):
+        return str(self.quantity) + " " + str(self.lemonade)
+
+
+class Order(models.Model):
+    set = models.ManyToManyField(LemonadeSet)
+
+    def get_price(self):
+        sum = 0
+        for s in self.set.all():
+            sum = sum + s.quantity * s.lemonade.price
+        return sum
+
+
+class Sale(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
     date = models.DateTimeField()
     sales_person = models.ForeignKey(Staff, on_delete=models.CASCADE)
 

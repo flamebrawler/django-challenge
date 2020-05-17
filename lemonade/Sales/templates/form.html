@@ -6,10 +6,29 @@
 </head>
 <body style="background-color:#ebf7fc">
 <h3>Sale Entry Form</h3>
+
+<form method="post">
+    {% csrf_token %}
+    {{lemonade}}
+    <input type="submit" name='add' value="Add item">
+    <input type="submit" name='remove' value="Remove item">
+</form>
+{% if order %}
+<table>
+{% for set in order %}
+    <tr>
+        <td>{{set.lemonade}}</td>
+        <td>{{set.quantity}}</td>
+    </tr>
+{% endfor %}
+</table>
+{% endif %}
+${{ total }}
 <form method="post">
     {% csrf_token %}
     {{form}}
-    <input type="submit" value="OK">
+    <input type="submit" name="submit" value="Submit Form">
 </form>
+<a href='{{home}}'>Home</a>
 </body>
 </html>
