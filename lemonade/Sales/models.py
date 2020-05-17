@@ -39,7 +39,7 @@ class Order(models.Model):
 
 
 class Sale(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, default=1, on_delete=models.CASCADE)
     date = models.DateTimeField()
     sales_person = models.ForeignKey(Staff, on_delete=models.CASCADE)
 
