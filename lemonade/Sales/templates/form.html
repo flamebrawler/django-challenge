@@ -9,9 +9,12 @@
 
 <form method="post">
     {% csrf_token %}
-    {{lemonade}}
-    <input type="submit" name='add' value="Add item">
-    <input type="submit" name='remove' value="Remove item">
+    {% for field in lemonade %}
+    {{ field.label_tag }} {{ field }}
+    {% endfor %}
+    <input type="submit" name='add' value="Add items">
+    <input type="submit" name='remove' value="Remove items">
+    <input type="submit" name='clear' value="Clear" formnovalidate>
 </form>
 {% if order %}
 <table style="width:350px; border: 1px solid black">
@@ -31,7 +34,9 @@ Total: ${{ total }}
 <br>
 <form method="post">
     {% csrf_token %}
-    {{form}}
+    {% for field in form %}
+    {{ field.label_tag }} {{ field }}
+    {% endfor %}
     <input type="submit" name="submit" value="Submit Form">
 </form>
 <a href='{{home}}'>Home</a>

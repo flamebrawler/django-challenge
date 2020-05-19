@@ -5,6 +5,36 @@
     <title>Report</title>
 </head>
 <body style="background-color:#ebf7fc">
-
+<h3>Sales & Commission Viewing Form</h3>
+<form method="post">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" value="View Report">
+</form>
+{% if table %}
+<table style="width:70%; border: 1px solid black" >
+    <tr>
+        <td>Date</td>
+        <td>Items Sold</td>
+        <td>Total Price</td>
+        <td>Commission Earned</td>
+    </tr>
+{% for sale, price, commission in sales %}
+    <tr >
+        <td>{{sale.date}}</td>
+        <td>{{sale.order}}</td>
+        <td>${{price}}</td>
+        <td>${{commission}}</td>
+    </tr>
+{% endfor %}
+    <tr>
+        <td>TOTALS</td>
+        <td></td>
+        <td>${{ total_price }}</td>
+        <td>${{ commission_earned }}</td>
+    </tr>
+</table>
+{% endif %}
+<a href="{{home}}">Home</a>
 </body>
 </html>

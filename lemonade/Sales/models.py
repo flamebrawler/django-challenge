@@ -31,10 +31,15 @@ class LemonadeSet(models.Model):
 class Order(models.Model):
     set = models.ManyToManyField(LemonadeSet)
 
+    def __str__(self):
+        if self.set.count() > 1:
+            return 'list of items'
+        return str(self.set.get().lemonade)
+
     def get_price(self):
         sum = 0
         for s in self.set.all():
-            sum = sum + s.quantity * s.lemonade.price
+            sum += s.quantity * s.lemonade.price
         return sum
 
 
@@ -46,3 +51,5 @@ class Sale(models.Model):
     def __str__(self):
         return "Sale " + str(self.id) + ": " + str(self.date)
 
+    def get_commission(self):
+        return self.order.get_price()*self.sales_person.commission_percentage/100
