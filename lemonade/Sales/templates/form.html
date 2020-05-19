@@ -47,9 +47,11 @@ Total Price: <input type="text" value="${{ total }}" readonly>
     {% endfor %}
     <input type="submit" name="submit" value="Submit Form">
 </form>
+
 {%if error_message != "" %}
 <p style="color:red">{{error_message}}</p>
 {%endif%}
+
 <a href='{{home}}'>Home</a>
 </body>
 </html>
