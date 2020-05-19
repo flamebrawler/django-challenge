@@ -22,8 +22,8 @@ def iterable(queryset, defaulttext='Select Option'):
     return (('', defaulttext),)+tuple(zip(range(1, len(queryset)+1), queryset))
 
 
-class DateTimeInput(forms.DateInput):
-    input_type = "date"
+class DateTimeInput(forms.DateTimeInput):
+    input_type = "datetime-local"
 
 
 class ReportForm(forms.Form):
@@ -39,5 +39,5 @@ class EntryForm(forms.Form):
 
 class LemonadeEntryForm(forms.Form):
     Lemonade = forms.ChoiceField(label='Lemonade Sold', choices=iterable(Lemonade.objects.all()), initial='')
-    quantity = forms.IntegerField(label="Qty")
+    quantity = forms.IntegerField(label="Qty", min_value=1)
 

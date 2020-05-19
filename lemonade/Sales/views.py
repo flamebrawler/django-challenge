@@ -42,6 +42,9 @@ def form(request):
     # initialize order in session
     id = get_session(request)
 
+    if 'error_message' not in request.session:
+        request.session['error_message'] = ""
+
     if request.method == 'POST' and 'clear' in request.POST:
         order = Order.objects.get(id=id)
         order.set.all().delete()
@@ -63,38 +66,58 @@ def form(request):
         lemonade_form = LemonadeEntryForm()
     # handle posts from form submission
     if request.method == 'POST' and 'submit' in request.POST:
-        form = EntryForm(request.POST)
+        if Order.objects.get(id=request.session['id']).set.count() > 0:
+            form = EntryForm(request.POST)
 
-        if form.is_valid():
+            if form.is_valid():
 
-            name = Staff.objects.get(id=form.cleaned_data['name'])
+                name = Staff.objects.get(id=form.cleaned_data['name'])
 
-            date = form.cleaned_data['date']
+                date = form.cleaned_data['date']
 
-            c_order = Order.objects.get(id=request.session['id'])
-            sale = Sale(
-                sales_person=name,
-                order=c_order,
-                date=date
-            )
-            sale.save()
-            # make a new order
-            order = Order()
-            order.save()
-            request.session['id'] = order.id
+                c_order = Order.objects.get(id=request.session['id'])
+                sale = Sale(
+                    sales_person=name,
+                    order=c_order,
+                    date=date
+                )
+                sale.save()
+                # make a new order
+                order = Order()
+                order.save()
+                request.session['id'] = order.id
 
-            return HttpResponseRedirect(reverse('form'))
+                request.session['submit'] = True
+
+                return HttpResponseRedirect('')
+        else:
+            request.session['error_message'] = "In order to submit, add items to the list"
+            form = EntryForm()
+
     else:
         form = EntryForm()
 
     order = Order.objects.get(id=request.session['id'])
+
+    # handle submission message
+    if 'submit' not in request.session or request.session['submit'] is False:
+        submitted = False
+    else:
+        submitted = True
+
+    request.session['submit'] = False
+
     template = {
+        'submit': submitted,
         'form': form,
         'lemonade': lemonade_form,
         'order': order.set.all(),
         'total': order.get_price(),
-        'home': reverse('index')
+        'home': reverse('index'),
+        'error_message': request.session['error_message']
     }
+    request.session['error_message'] = ""
+
     return render(request, 'form.html', template)
 
 
@@ -111,7 +134,7 @@ def remove_item(request, item, quantity):
     except ObjectDoesNotExist:
         request.session['error_message'] = 'Lemonade to be removed was not part of the list'
 
-    return HttpResponseRedirect(reverse('form'))
+    return HttpResponseRedirect('')
 
 
 def add_item(request, item, quantity):

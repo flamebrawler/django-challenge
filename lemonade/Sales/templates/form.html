@@ -3,9 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Form</title>
+
 </head>
 <body style="background-color:#ebf7fc">
 <h3>Sale Entry Form</h3>
+
+{% if submit == True %}
+    <div style="background-color:green" id="message">The form has been saved</div>
+    <script>
+        setTimeout(()=>document.getElementById("message").style.display="none",5000)
+    </script>
+{% endif %}
 
 <form method="post">
     {% csrf_token %}
@@ -30,7 +38,7 @@
 {% endfor %}
 </table>
 {% endif %}
-Total: ${{ total }}
+Total Price: <input type="text" value="${{ total }}" readonly>
 <br>
 <form method="post">
     {% csrf_token %}
@@ -39,6 +47,9 @@ Total: ${{ total }}
     {% endfor %}
     <input type="submit" name="submit" value="Submit Form">
 </form>
+{%if error_message != "" %}
+<p style="color:red">{{error_message}}</p>
+{%endif%}
 <a href='{{home}}'>Home</a>
 </body>
 </html>
