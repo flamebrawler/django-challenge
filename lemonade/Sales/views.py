@@ -25,10 +25,13 @@ def get_session(request):
 
 # converts date-time object into url compatible string
 def date_to_url(date):
+    info = date.tzinfo
+    if info is None:
+        info = 'UTC'
     return '{}+{}+{}'.format(
         date.date(),
         date.time(),
-        date.tzinfo)
+        info)
 
 
 # converts url compatible date into date-time object
@@ -113,7 +116,6 @@ def form(request):
         'lemonade': lemonade_form,
         'order': order.set.all(),
         'total': order.get_price(),
-        'home': reverse('index'),
         'error_message': request.session['error_message']
     }
     request.session['error_message'] = ""
@@ -166,8 +168,7 @@ def report(request):
 
     template = {
         'table': False,
-        'home': reverse('index'),
-        'form': form,
+        'form': form
     }
 
     return render(request, 'report.html', template)
@@ -206,7 +207,6 @@ def report_table(request, employee, start, end):
 
     template = {
         'table': True,
-        'home': reverse('index'),
         'form': form,
         'total_price': total_price,
         'commission_earned': commission_earned,

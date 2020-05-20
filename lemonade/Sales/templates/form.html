@@ -52,6 +52,6 @@ Total Price: <input type="text" value="${{ total }}" readonly>
 <p style="color:red">{{error_message}}</p>
 {%endif%}
 
-<a href='{{home}}'>Home</a>
+<a href='{% url "index" %}'>Home</a>
 </body>
 </html>
