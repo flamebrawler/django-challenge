@@ -1,11 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Form</title>
+{% extends 'base.html' %}
 
-</head>
-<body style="background-color:#ebf7fc">
+
+{% block head %}
+<title>Form</title>
+{% endblock %}
+
+{% block content %}
+
 <h3>Sale Entry Form</h3>
 
 {% if submit == True %}
@@ -53,5 +54,5 @@ Total Price: <input type="text" value="${{ total }}" readonly>
 {%endif%}
 
 <a href='{% url "index" %}'>Home</a>
-</body>
-</html>
+
+{% endblock %}

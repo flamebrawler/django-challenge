@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <style class="anchorjs"></style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+      <!-- Custom CS for JQuery UI -->
+    <link rel="stylesheet" href="/static/css/jquery-ui-1.10.4.min.css">
+
+    <!-- JQuery UI for things like Calendar Widget -->
+    <script src="/static/js/jquery-ui-1.10.4.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="/static/js/custom.js"></script>
+      {% block head %}
+      {% endblock %}
+  <title>Lemonade Stand</title>
+  </head>
+  <body style="background-color:#ebf7fc">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12">
+          <hr class="mt-0 mb-4">
+          {% block content %}
+          {% endblock %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,10 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Report</title>
-</head>
-<body style="background-color:#ebf7fc">
+{% extends 'base.html' %}
+
+
+{% block head %}
+<title>Report</title>
+{% endblock %}
+
+{% block content %}
+
 <h3>Sales & Commission Viewing Form</h3>
 <form method="post">
     {% csrf_token %}
@@ -36,5 +38,5 @@
 </table>
 {% endif %}
 <a href='{%url "index" %}'>Home</a>
-</body>
-</html>
+
+{% endblock %}
